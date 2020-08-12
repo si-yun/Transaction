@@ -1,0 +1,51 @@
+package edu.bit.board.controller;
+
+
+import java.sql.SQLException;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import edu.bit.board.service.TransactionService;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
+
+/**
+ * Handles requests for the application home page.
+ */
+@AllArgsConstructor
+@Log4j
+@Controller
+public class TransactionController {
+	
+	private TransactionService transactionService;
+	
+	@GetMapping("/tran/{num}")//restful(방식) 관련 annotaion @pathVariable 
+	public void transaction(@PathVariable("num")int num) throws Exception{
+		if(num ==1) {
+			log.info("transaction1 Test");
+			transactionService.transactionTest1();
+		}else if(num ==2) {
+			log.info("transaction2 Test");
+			transactionService.transactionTest2();
+		}else if(num ==3) {
+			log.info("transaction3 Test");
+			transactionService.transactionTest3();
+		}else if(num ==4) {
+			log.info("transaction4 Test");
+			transactionService.transactionTest4();
+		}else if(num ==5) {
+			log.info("transaction5 Test");
+			transactionService.transactionTest5();
+		}else if(num ==6) {
+			log.info("transaction6 Test");
+			transactionService.transactionTest6();
+		}
+	}
+}
+
+	
+
+
+
