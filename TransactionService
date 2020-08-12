@@ -1,0 +1,130 @@
+package edu.bit.board.service;
+
+
+import java.io.IOException;
+import java.sql.SQLException;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.bit.board.mapper.BoardMapper;
+import edu.bit.board.vo.BoardVO;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
+
+@Log4j
+@Service
+@AllArgsConstructor
+public class TransactionService  {
+	 
+	private BoardMapper boardMapper;
+	
+	public void transactionTest1() {
+		log.info("트랜젝션 1test");
+		
+		BoardVO boardVO = new BoardVO();
+		boardVO.setbContent("트랜1");
+		boardVO.setbName("트랜1");
+		boardVO.setbTitle("트랜1");
+		
+		boardMapper.insertboard(boardVO);
+		
+		boardVO.setbContent("트랜2");
+		boardVO.setbName("트랜2");
+		boardVO.setbTitle("트랜2");
+		
+		boardMapper.insertboard(boardVO);
+		
+	}
+	public void transactionTest2() {
+		log.info("트랜젝션 2test");
+		
+		BoardVO boardVO = new BoardVO();
+		boardVO.setbContent("트랜1");
+		boardVO.setbName("트랜1");
+		boardVO.setbTitle("트랜1");
+		
+		boardMapper.insertboard(boardVO);
+		
+		boardVO.setbContent("트랜2");
+		boardVO.setbName("트랜2");
+		boardVO.setbTitle("트랜2");
+		
+		boardVO = null;
+		
+		boardMapper.insertboard(boardVO);
+		
+	}
+	@Transactional
+	public void transactionTest3() {
+		log.info("트랜젝션 3test");
+		
+		BoardVO boardVO = new BoardVO();
+		boardVO.setbContent("트랜1");
+		boardVO.setbName("트랜1");
+		boardVO.setbTitle("트랜1");
+		
+		boardMapper.insertboard(boardVO);
+		
+		boardVO.setbContent("트랜2");
+		boardVO.setbName("트랜2");
+		boardVO.setbTitle("트랜2");
+		
+		boardVO = null;
+		
+		boardMapper.insertboard(boardVO);
+		
+	}
+	@Transactional //transaction이 발생하는 경우는 롤백이 먹히는경우 외부에서 에러가났을경우임. 
+	public void transactionTest4() {
+		log.info("트랜젝션 4test");
+		
+		BoardVO boardVO = new BoardVO();
+		boardVO.setbContent("트랜4");
+		boardVO.setbName("트랜4");
+		boardVO.setbTitle("트랜4");
+		
+		boardMapper.insertboard(boardVO);
+
+		throw new RuntimeException("RuntimeException for rollback");
+	}
+	@Transactional //transaction이 발생하는 경우는 롤백이 먹히는경우 외부에서 에러가났을경우임. 
+	public void transactionTest5() throws SQLException {
+		log.info("트랜젝션 5test");
+		
+		BoardVO boardVO = new BoardVO();
+		boardVO.setbContent("트랜5");
+		boardVO.setbName("트랜5");
+		boardVO.setbTitle("트랜5");
+		
+		boardMapper.insertboard(boardVO);
+
+		throw new SQLException("SQLException for rollback");
+	}
+	@Transactional(rollbackFor = Exception.class) //폴리몰티즘이 적용되어 롤백이됨 .(rollback이 되는 클래스를 지정할수있음.
+	public void transactionTest6() throws IOException {
+		log.info("트랜젝션 6test");
+		
+		BoardVO boardVO = new BoardVO();
+		boardVO.setbContent("트랜6");
+		boardVO.setbName("트랜6");
+		boardVO.setbTitle("트랜6");
+		
+		boardMapper.insertboard(boardVO);
+
+		throw new IOException("IOException for rollback");
+	}
+	@Transactional(rollbackFor = Exception.class) 			//@Transaction을 붙히는 곳은 비지니스 로직 Service단이 실행되는 부분이다.
+	public void transactionTest7() throws SQLException {	//다른말로,controller에서 붙혀서는 안된다 
+		log.info("트랜젝션 test");								// 선언적 트랜잭션에서는 런타임 예외가 발생하면 롤백한다.
+															//반명에 예외가 전혀 발생하지 않거나 체크 예외가 발생하면 커밋한다.(롤백하지않는다)
+		BoardVO boardVO = new BoardVO();					//rellbackFor를 통해서 컴파일 예외를 처리할수있다.
+		boardVO.setbContent("트랜7");							//@Transaction(rollbackFor = SQLEceoption.class)
+		boardVO.setbName("트랜7");
+		boardVO.setbTitle("트랜7");
+		
+		boardMapper.insertboard(boardVO);
+
+		throw new SQLException("SQLException for rollback");
+	}
+}
